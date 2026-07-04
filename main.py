@@ -1,4 +1,6 @@
-from scanner import run
+from exchange import get_symbols
 
-if __name__ == "__main__":
-    run()
+symbols = get_symbols()
+
+print(len(symbols))
+print(symbols[:20])

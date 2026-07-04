@@ -1,10 +1,4 @@
-TIMEFRAME = "1h"
+BYBIT_URL = "https://api.bybit.com"
+TIMEFRAME = "60"
 LIMIT = 500
-
-EMA_FAST = 20
-EMA_SLOW = 50
-EMA_TREND = 200
-
 SCAN_INTERVAL = 3600
-
-BINANCE_FUTURES = "https://fapi.binance.com"
