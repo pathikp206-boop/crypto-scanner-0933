@@ -42,8 +42,6 @@ def get_klines(symbol):
 
     response = requests.get(url, params=params, timeout=30)
 
-    print("Status:", response.status_code)
-
     data = response.json()
 
     if data["code"] != "0":

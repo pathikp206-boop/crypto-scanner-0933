@@ -6,11 +6,17 @@ def run():
 
     symbols = get_symbols()
 
-    print(f"Scanning {len(symbols)} symbols...\n")
+    total = len(symbols)
+
+    print("=" * 50)
+    print(f"Scanning {total} symbols...")
+    print("=" * 50)
 
     candidates = []
 
-    for symbol in symbols:
+    for i, symbol in enumerate(symbols, start=1):
+
+        print(f"[{i:03}/{total}] {symbol}")
 
         try:
 
@@ -30,18 +36,32 @@ def run():
                 candidates.append(
                     {
                         "symbol": symbol,
-                        "price": latest["close"],
-                        "rsi": round(latest["RSI"], 1),
+                        "price": round(latest["close"], 4),
+                        "rsi": round(latest["RSI"], 2),
                         "atr": round(latest["ATR"], 2)
                     }
                 )
 
         except Exception as e:
 
-            print(symbol, e)
+            print(f"❌ {symbol}: {e}")
 
-    print("\nCandidates Found:", len(candidates))
+    print("\n" + "=" * 50)
+    print("SCAN COMPLETE")
+    print("=" * 50)
 
-    for coin in candidates:
+    print(f"Coins Scanned : {total}")
+    print(f"Candidates    : {len(candidates)}")
 
-        print(coin)
+    if candidates:
+
+        print("\nTop Candidates\n")
+
+        for coin in candidates:
+
+            print(
+                f"{coin['symbol']} | "
+                f"Price: {coin['price']} | "
+                f"RSI: {coin['rsi']} | "
+                f"ATR: {coin['atr']}"
+            )
