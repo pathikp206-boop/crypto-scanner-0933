@@ -9,11 +9,24 @@ def get_symbols():
         "category": "linear"
     }
 
-    response = requests.get(url, params=params, timeout=30)
+    response = requests.get(
+    url,
+    params=params,
+    timeout=30,
+    headers={
+        "User-Agent": "Mozilla/5.0"
+    }
+)
 
-    print(response.status_code)
+print("Status:", response.status_code)
+print("Headers:", response.headers)
+print("Body:")
+print(response.text)
 
-    data = response.json()
+if response.status_code != 200:
+    raise Exception("HTTP Error")
+
+data = response.json()
 
     if data["retCode"] != 0:
         raise Exception(data)
