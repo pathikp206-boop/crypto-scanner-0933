@@ -4,7 +4,6 @@ from config import OKX_URL, LIMIT, TIMEFRAME
 
 
 def get_symbols():
-
     url = f"{OKX_URL}/api/v5/public/instruments"
 
     params = {
@@ -33,7 +32,6 @@ def get_symbols():
 
 
 def get_klines(symbol):
-
     url = f"{OKX_URL}/api/v5/market/candles"
 
     params = {
@@ -43,6 +41,8 @@ def get_klines(symbol):
     }
 
     response = requests.get(url, params=params, timeout=30)
+
+    print("Status:", response.status_code)
 
     data = response.json()
 
@@ -64,27 +64,29 @@ def get_klines(symbol):
         ]
     )
 
+    # Oldest candle first
     df = df.iloc[::-1].reset_index(drop=True)
 
-   numeric = [
-    "open",
-    "high",
-    "low",
-    "close",
-    "volume",
-    "volCcy",
-    "volCcyQuote"
-]
-
-df[numeric] = df[numeric].astype(float)
-
-df["confirm"] = df["confirm"].astype(int)
+    # Convert numeric columns
+    numeric = [
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "volCcy",
+        "volCcyQuote"
+    ]
 
     df[numeric] = df[numeric].astype(float)
 
+    # Convert timestamp
     df["timestamp"] = pd.to_datetime(
         df["timestamp"].astype("int64"),
         unit="ms"
     )
+
+    # Convert confirm flag
+    df["confirm"] = df["confirm"].astype(int)
 
     return df
