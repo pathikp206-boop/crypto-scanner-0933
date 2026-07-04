@@ -1,21 +1,47 @@
-from telegram_bot import send_message
-from binance_api import get_symbols
+from okx_api import get_symbols, get_klines
+from indicators import add_indicators
 
 
 def run():
 
     symbols = get_symbols()
 
-    message = f"""
-📡 Binance Connected
+    print(f"Scanning {len(symbols)} symbols...\n")
 
-Exchange : Binance Futures
+    candidates = []
 
-USDT Pairs : {len(symbols)}
+    for symbol in symbols:
 
-Status : ✅ Ready
-"""
+        try:
 
-    send_message(message)
+            df = get_klines(symbol)
 
-    print(message)
+            df = add_indicators(df)
+
+            latest = df.iloc[-2]
+
+            if (
+                latest["close"] > latest["EMA20"]
+                and latest["EMA20"] > latest["EMA50"]
+                and latest["EMA50"] > latest["EMA200"]
+                and latest["RSI"] > 55
+            ):
+
+                candidates.append(
+                    {
+                        "symbol": symbol,
+                        "price": latest["close"],
+                        "rsi": round(latest["RSI"], 1),
+                        "atr": round(latest["ATR"], 2)
+                    }
+                )
+
+        except Exception as e:
+
+            print(symbol, e)
+
+    print("\nCandidates Found:", len(candidates))
+
+    for coin in candidates:
+
+        print(coin)
