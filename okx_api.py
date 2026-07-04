@@ -66,13 +66,19 @@ def get_klines(symbol):
 
     df = df.iloc[::-1].reset_index(drop=True)
 
-    numeric = [
-        "open",
-        "high",
-        "low",
-        "close",
-        "volume"
-    ]
+   numeric = [
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "volCcy",
+    "volCcyQuote"
+]
+
+df[numeric] = df[numeric].astype(float)
+
+df["confirm"] = df["confirm"].astype(int)
 
     df[numeric] = df[numeric].astype(float)
 
