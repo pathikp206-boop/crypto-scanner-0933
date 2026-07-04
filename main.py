@@ -1,8 +1,8 @@
 import os
 import requests
 
-BOT_TOKEN = os.environ["8826826388:AAFB7Dnddhk8N618OMvLgI_ypWDN8GwFs2I"]
-CHANNEL_ID = os.environ["-1004337759048"]
+BOT_TOKEN = os.environ["BOT_TOKEN"]
+CHANNEL_ID = os.environ["CHANNEL_ID"]
 
 message = "🚀 Crypto Scanner Started Successfully!"
 
