@@ -1,9 +1,8 @@
 from okx_api import get_klines
+from indicators import add_indicators
 
 df = get_klines("BTC-USDT-SWAP")
 
-print(df.head())
+df = add_indicators(df)
 
 print(df.tail())
-
-print(df.dtypes)
