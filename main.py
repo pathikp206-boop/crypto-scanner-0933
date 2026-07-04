@@ -4,7 +4,7 @@ import requests
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHANNEL_ID = os.environ["CHANNEL_ID"]
 
-message = "🚀 Crypto Scanner Started Successfully!"
+message = "🚀 Crypto Scanner Started new one Successfully!"
 
 url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
