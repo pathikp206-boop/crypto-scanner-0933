@@ -9,36 +9,22 @@ def get_symbols():
         "category": "linear"
     }
 
-    response = requests.get(
-    url,
-    params=params,
-    timeout=30,
-    headers={
-        "User-Agent": "Mozilla/5.0"
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Accept": "application/json"
     }
-)
 
-print("Status:", response.status_code)
-print("Headers:", response.headers)
-print("Body:")
-print(response.text)
+    response = requests.get(
+        url,
+        params=params,
+        headers=headers,
+        timeout=30
+    )
 
-if response.status_code != 200:
-    raise Exception("HTTP Error")
+    print("STATUS:", response.status_code)
+    print("URL:", response.url)
+    print("HEADERS:", response.headers)
+    print("BODY:")
+    print(response.text)
 
-data = response.json()
-
-    if data["retCode"] != 0:
-        raise Exception(data)
-
-    symbols = []
-
-    for s in data["result"]["list"]:
-
-        if (
-            s["status"] == "Trading"
-            and s["quoteCoin"] == "USDT"
-        ):
-            symbols.append(s["symbol"])
-
-    return sorted(symbols)
+    raise Exception("Stop here")
