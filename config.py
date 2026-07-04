@@ -1,4 +1,10 @@
-BYBIT_URL = "https://api.bybit.com"
-TIMEFRAME = "60"
+OKX_URL = "https://www.okx.com"
+
+TIMEFRAME = "1H"
 LIMIT = 500
+
+EMA_FAST = 20
+EMA_SLOW = 50
+EMA_TREND = 200
+
 SCAN_INTERVAL = 3600

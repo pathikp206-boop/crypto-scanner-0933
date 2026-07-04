@@ -1,30 +1,32 @@
 import requests
-from config import BYBIT_URL
+from config import OKX_URL
 
 
 def get_symbols():
-    url = f"{BYBIT_URL}/v5/market/instruments-info"
+
+    url = f"{OKX_URL}/api/v5/public/instruments"
 
     params = {
-        "category": "linear"
+        "instType": "SWAP"
     }
 
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-        "Accept": "application/json"
-    }
+    response = requests.get(url, params=params, timeout=30)
 
-    response = requests.get(
-        url,
-        params=params,
-        headers=headers,
-        timeout=30
-    )
+    print("Status:", response.status_code)
 
-    print("STATUS:", response.status_code)
-    print("URL:", response.url)
-    print("HEADERS:", response.headers)
-    print("BODY:")
-    print(response.text)
+    data = response.json()
 
-    raise Exception("Stop here")
+    if data["code"] != "0":
+        raise Exception(data)
+
+    symbols = []
+
+    for s in data["data"]:
+
+        if (
+            s["state"] == "live"
+            and s["settleCcy"] == "USDT"
+        ):
+            symbols.append(s["instId"])
+
+    return sorted(symbols)
