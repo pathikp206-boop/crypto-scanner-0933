@@ -14,17 +14,28 @@ def scan_symbol(symbol):
         latest = df.iloc[-2]
 
         if (
-            latest["close"] > latest["EMA20"]
-            and latest["EMA20"] > latest["EMA50"]
-            and latest["EMA50"] > latest["EMA200"]
-            and latest["RSI"] > 55
+            from strategy import score
+
+s = score(df)
+
+if s >= 70:
+
+    candidates.append(
+        {
+            "symbol": symbol,
+            "score": s,
+            "price": latest["close"],
+            "rsi": round(latest["RSI"], 2),
+            "atr": round(latest["ATR"], 6)
+        }
+    )
         ):
 
             return {
                 "symbol": symbol,
                 "price": latest["close"],
                 "rsi": round(latest["RSI"], 2),
-                "atr": round(latest["ATR"])
+                "atr": round(latest["ATR"], 6)
             }
 
     except Exception as e:
@@ -67,7 +78,7 @@ def run():
     end = time.time()
 
     candidates.sort(
-        key=lambda x: x["rsi"],
+        key=lambda x: x["score"],
         reverse=True
     )
 
