@@ -1,67 +1,91 @@
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from okx_api import get_symbols, get_klines
 from indicators import add_indicators
+import time
+
+
+def scan_symbol(symbol):
+    try:
+
+        df = get_klines(symbol)
+
+        df = add_indicators(df)
+
+        latest = df.iloc[-2]
+
+        if (
+            latest["close"] > latest["EMA20"]
+            and latest["EMA20"] > latest["EMA50"]
+            and latest["EMA50"] > latest["EMA200"]
+            and latest["RSI"] > 55
+        ):
+
+            return {
+                "symbol": symbol,
+                "price": latest["close"],
+                "rsi": round(latest["RSI"], 2),
+                "atr": round(latest["ATR"], 2)
+            }
+
+    except Exception as e:
+        print(f"{symbol}: {e}")
+
+    return None
 
 
 def run():
 
     symbols = get_symbols()
 
-    total = len(symbols)
+    print(f"\nScanning {len(symbols)} symbols...\n")
 
-    print("=" * 50)
-    print(f"Scanning {total} symbols...")
-    print("=" * 50)
+    start = time.time()
 
     candidates = []
 
-    for i, symbol in enumerate(symbols, start=1):
+    with ThreadPoolExecutor(max_workers=20) as executor:
 
-        print(f"[{i:03}/{total}] {symbol}")
+        futures = {
+            executor.submit(scan_symbol, symbol): symbol
+            for symbol in symbols
+        }
 
-        try:
+        completed = 0
 
-            df = get_klines(symbol)
+        for future in as_completed(futures):
 
-            df = add_indicators(df)
+            completed += 1
 
-            latest = df.iloc[-2]
+            if completed % 20 == 0:
+                print(f"Progress: {completed}/{len(symbols)}")
 
-            if (
-                latest["close"] > latest["EMA20"]
-                and latest["EMA20"] > latest["EMA50"]
-                and latest["EMA50"] > latest["EMA200"]
-                and latest["RSI"] > 55
-            ):
+            result = future.result()
 
-                candidates.append(
-                    {
-                        "symbol": symbol,
-                        "price": round(latest["close"], 4),
-                        "rsi": round(latest["RSI"], 2),
-                        "atr": round(latest["ATR"], 2)
-                    }
-                )
+            if result:
+                candidates.append(result)
 
-        except Exception as e:
+    end = time.time()
 
-            print(f"❌ {symbol}: {e}")
+    candidates.sort(
+        key=lambda x: x["rsi"],
+        reverse=True
+    )
 
-    print("\n" + "=" * 50)
+    print("\n==============================")
     print("SCAN COMPLETE")
-    print("=" * 50)
+    print("==============================")
 
-    print(f"Coins Scanned : {total}")
+    print(f"Coins scanned : {len(symbols)}")
     print(f"Candidates    : {len(candidates)}")
+    print(f"Time          : {end-start:.2f} sec")
 
-    if candidates:
+    print("\nTop 20\n")
 
-        print("\nTop Candidates\n")
+    for coin in candidates[:20]:
 
-        for coin in candidates:
-
-            print(
-                f"{coin['symbol']} | "
-                f"Price: {coin['price']} | "
-                f"RSI: {coin['rsi']} | "
-                f"ATR: {coin['atr']}"
-            )
+        print(
+            f"{coin['symbol']} | "
+            f"Price {coin['price']:.4f} | "
+            f"RSI {coin['rsi']} | "
+            f"ATR {coin['atr']}"
+        )
