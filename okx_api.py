@@ -12,7 +12,7 @@ def get_symbols():
 
     response = requests.get(url, params=params, timeout=30)
 
-    print("Status:", response.status_code)
+    
 
     data = response.json()
 
