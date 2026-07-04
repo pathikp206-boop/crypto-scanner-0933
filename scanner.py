@@ -24,7 +24,7 @@ def scan_symbol(symbol):
                 "symbol": symbol,
                 "price": latest["close"],
                 "rsi": round(latest["RSI"], 2),
-                "atr": round(latest["ATR"], 2)
+                "atr": round(latest["ATR"])
             }
 
     except Exception as e:
