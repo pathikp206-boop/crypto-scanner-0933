@@ -43,7 +43,7 @@ def run():
 
     candidates = []
 
-    with ThreadPoolExecutor(max_workers=20) as executor:
+    with ThreadPoolExecutor(max_workers=5) as executor:
 
         futures = {
             executor.submit(scan_symbol, symbol): symbol
