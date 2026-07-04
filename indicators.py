@@ -1,30 +1,40 @@
-import ta
+import pandas as pd
 
 
 def add_indicators(df):
 
-    df["EMA20"] = ta.trend.ema_indicator(df["close"], window=20)
+    # EMA
+    df["EMA20"] = df["close"].ewm(span=20, adjust=False).mean()
+    df["EMA50"] = df["close"].ewm(span=50, adjust=False).mean()
+    df["EMA200"] = df["close"].ewm(span=200, adjust=False).mean()
 
-    df["EMA50"] = ta.trend.ema_indicator(df["close"], window=50)
+    # Volume Average
+    df["VOL20"] = df["volume"].rolling(20).mean()
 
-    df["EMA200"] = ta.trend.ema_indicator(df["close"], window=200)
+    # True Range
+    high_low = df["high"] - df["low"]
+    high_close = (df["high"] - df["close"].shift()).abs()
+    low_close = (df["low"] - df["close"].shift()).abs()
 
-    df["RSI"] = ta.momentum.rsi(df["close"], window=14)
+    tr = pd.concat(
+        [high_low, high_close, low_close],
+        axis=1
+    ).max(axis=1)
 
-    df["ATR"] = ta.volatility.average_true_range(
-        df["high"],
-        df["low"],
-        df["close"],
-        window=14
-    )
+    # ATR
+    df["ATR"] = tr.rolling(14).mean()
 
-    df["ADX"] = ta.trend.adx(
-        df["high"],
-        df["low"],
-        df["close"],
-        window=14
-    )
+    # RSI
+    delta = df["close"].diff()
 
-    df["VOL_MA20"] = df["volume"].rolling(20).mean()
+    gain = delta.clip(lower=0)
+    loss = -delta.clip(upper=0)
+
+    avg_gain = gain.rolling(14).mean()
+    avg_loss = loss.rolling(14).mean()
+
+    rs = avg_gain / avg_loss
+
+    df["RSI"] = 100 - (100 / (1 + rs))
 
     return df
