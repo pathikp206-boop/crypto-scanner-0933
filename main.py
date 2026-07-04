@@ -1,6 +1,9 @@
-from exchange import get_symbols
+from okx_api import get_klines
 
-symbols = get_symbols()
+df = get_klines("BTC-USDT-SWAP")
 
-print(len(symbols))
-print(symbols[:20])
+print(df.head())
+
+print(df.tail())
+
+print(df.dtypes)

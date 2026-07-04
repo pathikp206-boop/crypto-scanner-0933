@@ -1,10 +1,7 @@
 OKX_URL = "https://www.okx.com"
 
 TIMEFRAME = "1H"
-LIMIT = 500
 
-EMA_FAST = 20
-EMA_SLOW = 50
-EMA_TREND = 200
+LIMIT = 300
 
 SCAN_INTERVAL = 3600
